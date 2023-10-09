@@ -15,8 +15,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "lifecycle_rule" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "lifecycle_rule")
     }
 
@@ -53,8 +52,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "website" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "website")
     }
 
@@ -66,8 +64,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "cors" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "cors")
     }
 
@@ -81,8 +78,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "retention_policy" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "retention_policy")
     }
 
@@ -94,8 +90,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "logging" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "logging")
     }
 
@@ -107,8 +102,7 @@ resource "google_storage_bucket" "buckets" {
 
   dynamic "encryption" {
     for_each = {
-      for k, v in var.storage_buckets :
-      k => v
+      for k, v in var.storage_buckets : k => v
       if contains(keys(v), "encryption")
     }
 
