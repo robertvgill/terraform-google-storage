@@ -1,10 +1,18 @@
+/**
+resource "random_id" "bucket_suffix" {
+  count = var.randomize_suffix ? 1 : 0
+
+  byte_length = 5
+}
+**/
 resource "google_storage_bucket" "buckets" {
   for_each = {
     for k, v in var.storage_buckets : k => v
     if v.create
   }
 
-  name                        = format("%s", each.key)
+//  name                        = substr(join("-", compact([each.key, var.randomize_suffix ? random_id.bucket_suffix[0].hex : ""])), 0, 63)
+  name                        = substr(join("-", compact([format("%s", var.project_id), "gs",format("%s", each.key)])), 0, 50)
   force_destroy               = lookup(each.value, "force_destroy", null)
   location                    = format("%s", var.location_id)
   project                     = format("%s", var.project_id)
@@ -38,16 +46,8 @@ resource "google_storage_bucket" "buckets" {
     }
   }
 
-  dynamic "versioning" {
-    for_each = {
-      for k, v in var.storage_buckets :
-      k => v
-      if contains(keys(v), "versioning")
-    }
-
-    content {
-      enabled = try(each.value.versioning.enabled, null)
-    }
+  versioning {
+    enabled = each.value.versioning.enabled
   }
 
   dynamic "website" {
@@ -110,4 +110,13 @@ resource "google_storage_bucket" "buckets" {
       default_kms_key_name = try(each.value.encryption.default_kms_key_name, null)
     }
   }
+}
+
+
+resource "google_storage_bucket_object" "objects" {
+  for_each = fileset(path.module, "files/*")
+
+  name   = each.value
+  source = each.value
+  bucket = google_storage_bucket.buckets["terraform"].name
 }

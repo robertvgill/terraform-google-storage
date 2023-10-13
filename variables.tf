@@ -18,6 +18,12 @@ variable "location_id" {
   default     = ""
 }
 
+variable "randomize_suffix" {
+  description = "Adds an identical, but randomized 4-character suffix to all bucket names."
+  type        = bool
+  default     = false
+}
+
 variable "storage_buckets" {
   description = "Creates a new bucket in Google cloud storage service (GCS)."
   default     = {}
