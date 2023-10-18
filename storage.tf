@@ -11,8 +11,8 @@ resource "google_storage_bucket" "buckets" {
     if v.create
   }
 
-//  name                        = substr(join("-", compact([each.key, var.randomize_suffix ? random_id.bucket_suffix[0].hex : ""])), 0, 63)
-  name                        = substr(join("-", compact([format("%s", var.project_id), "gs",format("%s", each.key)])), 0, 50)
+  //  name                        = substr(join("-", compact([each.key, var.randomize_suffix ? random_id.bucket_suffix[0].hex : ""])), 0, 63)
+  name                        = substr(join("-", compact([format("%s", var.project_id), "gs", format("%s", each.key)])), 0, 50)
   force_destroy               = lookup(each.value, "force_destroy", null)
   location                    = format("%s", var.location_id)
   project                     = format("%s", var.project_id)
@@ -110,13 +110,4 @@ resource "google_storage_bucket" "buckets" {
       default_kms_key_name = try(each.value.encryption.default_kms_key_name, null)
     }
   }
-}
-
-
-resource "google_storage_bucket_object" "objects" {
-  for_each = fileset(path.module, "files/*")
-
-  name   = each.value
-  source = each.value
-  bucket = google_storage_bucket.buckets["terraform"].name
 }
